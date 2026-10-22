@@ -1,0 +1,1028 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kimetsu no Yaiba: Wisteria Defense (Benteng Pembasmi Iblis)</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌸</text></svg>">
+</head>
+<body>
+
+    <!-- Ambient Wisteria Petals Canvas -->
+    <canvas id="bg-petals-canvas"></canvas>
+
+    <!-- ==========================================================================
+         MAIN MENU SCREEN (TITLE SCREEN)
+         ========================================================================== -->
+    <div id="main-menu-screen">
+        <div class="menu-title-container">
+            <div class="menu-crest">🌸 ⚔️ ⛩️</div>
+            <h1 class="menu-main-title">KIMETSU NO YAIBA<br><span style="font-size: 2rem; color: #ffd700;">WISTERIA DEFENSE</span></h1>
+            <div class="menu-sub-title">Benteng Pertahanan Bunga Wisteria • Korps Pembasmi Iblis</div>
+        </div>
+
+        <div class="menu-buttons-list">
+            <button class="btn-menu-action play-primary" id="btn-menu-play">
+                <span class="btn-icon">⚔️</span>
+                <span>MAIN SEKARANG</span>
+            </button>
+            <button class="btn-menu-action" id="btn-menu-almanac">
+                <span class="btn-icon">📖</span>
+                <span>INDEKS KARAKTER</span>
+            </button>
+            <button class="btn-menu-action" id="btn-menu-levels">
+                <span class="btn-icon">🗺️</span>
+                <span>DAFTAR LEVEL</span>
+            </button>
+            <button class="btn-menu-action" id="btn-menu-settings">
+                <span class="btn-icon">⚙️</span>
+                <span>PENGATURAN</span>
+            </button>
+            <button class="btn-menu-action" id="btn-menu-achievements">
+                <span class="btn-icon">🏆</span>
+                <span>SKOR PENCAPAIAN</span>
+            </button>
+            <button class="btn-menu-action" id="btn-menu-help">
+                <span class="btn-icon">❓</span>
+                <span>PANDUAN BERMAIN</span>
+            </button>
+        </div>
+
+        <div class="menu-version-tag">
+            Versi 2.0 • Diadaptasi dari Animasi Kimetsu no Yaiba & Mekanisme Plants vs Zombies
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         IN-GAME BATTLE INTERFACE
+         ========================================================================== -->
+    <div id="game-wrapper">
+
+        <!-- Header Bar -->
+        <header class="game-header">
+            <div class="brand-section">
+                <span class="brand-icon">🌸</span>
+                <div>
+                    <h1 class="brand-title">KIMETSU NO YAIBA: WISTERIA DEFENSE</h1>
+                    <div class="brand-subtitle">Benteng Pertahanan Bunga Wisteria • Korps Pembasmi Iblis</div>
+                </div>
+            </div>
+
+            <div class="header-controls">
+                <button class="btn-header gold" id="btn-pause-menu">⏸️ Menu / Jeda</button>
+                <button class="btn-header" id="btn-speed">⚡ 1x Speed</button>
+                <button class="btn-header" id="btn-almanac-hud">📖 Indeks</button>
+                <button class="btn-header" id="btn-levels">🗺️ Level</button>
+                <button class="btn-header" id="btn-settings-hud">⚙️ Opsi</button>
+            </div>
+        </header>
+
+        <!-- Top HUD: Resource Counter + Card Rack + Tools -->
+        <div class="hud-bar">
+            <!-- Wisteria Currency Box -->
+            <div class="resource-box">
+                <div class="resource-icon">🌸</div>
+                <div class="resource-info">
+                    <span class="resource-label">Kelopak Wisteria</span>
+                    <span class="resource-val" id="wisteria-count">200</span>
+                </div>
+            </div>
+
+            <!-- Cards Rack (PvZ Seed Bar with Progressive Unlock) -->
+            <div class="cards-rack" id="cards-rack">
+                <!-- Dynamically populated by game.js -->
+            </div>
+
+            <!-- Tools Box (Shovel & Hinokami Ultimate) -->
+            <div class="tools-box">
+                <div class="tool-btn" id="tool-shovel" title="Singkirkan Pembasmi Iblis">
+                    <span>⛏️</span>
+                    <span class="tool-label">Gali</span>
+                </div>
+                <div class="ultimate-btn" id="tool-ultimate" title="Tarian Dewa Api: Hinokami Kagura">
+                    <span class="ultimate-icon">☀️</span>
+                    <span class="ultimate-label">Hinokami</span>
+                    <div class="ultimate-progress" id="ultimate-fill" style="width: 0%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Ribbon -->
+        <div class="stats-ribbon">
+            <div class="stat-group">
+                <div class="stat-badge">
+                    <span class="stat-title">Lokasi:</span>
+                    <span class="stat-value" id="stat-level-title">Level 1: Hutan Wisteria</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="stat-title">Skor:</span>
+                    <span class="stat-value" id="stat-score">0</span>
+                </div>
+                <div class="stat-badge">
+                    <span class="stat-title">Rekor:</span>
+                    <span class="stat-value" id="stat-highscore">0</span>
+                </div>
+                <div class="stat-badge" style="display: none;">
+                    <span class="stat-value" id="stat-combo" style="color: #ff4081;">Combo x1</span>
+                </div>
+            </div>
+
+            <!-- Wave Progress Bar -->
+            <div class="wave-progress-container">
+                <span style="font-size:0.75rem; color:#ffd54f; font-weight:700;">Gelombang:</span>
+                <div class="wave-bar-bg">
+                    <div class="wave-bar-fill" id="wave-progress-fill"></div>
+                </div>
+                <span class="wave-flag">🚩</span>
+            </div>
+        </div>
+
+        <!-- Canvas Container -->
+        <div class="canvas-container">
+            <canvas id="game-canvas"></canvas>
+
+            <!-- Overlay Banner for Wave Announcements & Bosses -->
+            <div class="banner-overlay" id="banner-overlay">
+                <div class="banner-title" id="banner-title">MULAI PERTAHANAN!</div>
+                <div class="banner-subtitle" id="banner-sub">Tanam Dupa Wisteria & Siagakan Tanjiro!</div>
+            </div>
+        </div>
+
+        <!-- Footer Quick Tips -->
+        <div class="footer-tips">
+            💡 <span>Tips:</span> Tanam <span>Dupa Wisteria</span> di kolom belakang untuk panen kelopak 🌸. Pasang <span>Tanjiro</span> di jalur iblis. Klik kelopak wisteria yang melayang untuk mengumpulkannya! Tekan tombol <span>⏸️ Menu / Jeda</span> untuk jeda permainan.
+        </div>
+
+    </div>
+
+    <!-- Floating Achievement Toast Notifications -->
+    <div id="toast-container"></div>
+
+    <!-- ==========================================================================
+         MODAL: JEDA PERMAINAN (PAUSE MENU)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-pause">
+        <div class="modal-card" style="text-align: center; max-width: 440px;">
+            <div class="modal-header" style="justify-content: center;">
+                <h2 class="modal-title">⏸️ PERMAINAN DIJEDA</h2>
+            </div>
+            <p style="color: #ce93d8; font-size: 0.85rem; margin-bottom: 16px;">
+                Pertempuran dihentikan sementara. Pilih tindakan yang ingin dilakukan:
+            </p>
+
+            <div class="pause-menu-actions">
+                <button class="btn-primary" id="btn-pause-resume" style="width: 100%;">
+                    ▶️ Lanjutkan Pertempuran
+                </button>
+                <button class="btn-secondary" id="btn-pause-almanac" style="width: 100%;">
+                    📖 Buka Indeks Karakter (Almanac)
+                </button>
+                <button class="btn-secondary" id="btn-pause-settings" style="width: 100%;">
+                    ⚙️ Pengaturan Suara & Opsi
+                </button>
+                <button class="btn-secondary" id="btn-pause-restart" style="width: 100%;">
+                    🔁 Ulangi Level Ini
+                </button>
+                <button class="btn-secondary" id="btn-pause-quit" style="width: 100%; border-color: #ff5252; color: #ff5252;">
+                    🏠 Kembali ke Menu Utama
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: INDEKS KARAKTER (ALMANAC / ENSIKLOPEDIA)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-almanac">
+        <div class="modal-card" style="max-width: 780px;">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">📖 INDEKS KARAKTER & IBLIS (ALMANAC)</h2>
+                    <div style="font-size: 0.82rem; color: #ce93d8; margin-top: 3px;">
+                        Ensiklopedi Jurus Pernapasan, Statistik, dan Data Musuh
+                    </div>
+                </div>
+                <button class="modal-close" id="btn-close-almanac">&times;</button>
+            </div>
+
+            <!-- Tabs: Slayers vs Demons -->
+            <div class="almanac-tabs">
+                <button class="almanac-tab-btn active" id="tab-almanac-slayers">⚔️ Korps Pembasmi (10)</button>
+                <button class="almanac-tab-btn" id="tab-almanac-demons">👹 Bangsa Iblis (8)</button>
+            </div>
+
+            <!-- Split Layout: List on Left, Details on Right -->
+            <div class="almanac-layout">
+                <!-- Left Scrollable Cards List -->
+                <div class="almanac-list-scroll" id="almanac-items-list">
+                    <!-- Populated dynamically -->
+                </div>
+
+                <!-- Right Detail Panel -->
+                <div class="almanac-detail-panel" id="almanac-detail-panel">
+                    <div class="almanac-preview-stage">
+                        <div class="almanac-canvas-box">
+                            <canvas id="almanac-preview-canvas" width="90" height="90"></canvas>
+                        </div>
+                        <div class="almanac-char-title">
+                            <span class="almanac-big-name" id="almanac-name">Tanjiro Kamado</span>
+                            <span class="almanac-big-sub" id="almanac-sub">Pernapasan Air (Mizu no Kokyu)</span>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Stats Grid -->
+                    <div class="almanac-stats-grid" id="almanac-stats-grid">
+                        <!-- Populated dynamically -->
+                    </div>
+
+                    <!-- Description of Combat Mechanics -->
+                    <div class="almanac-desc-box" id="almanac-desc">
+                        Deskripsi karakter akan tampil di sini.
+                    </div>
+
+                    <!-- Lore & Quotes -->
+                    <div class="almanac-lore-box" id="almanac-lore">
+                        Kutipan anime akan tampil di sini.
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="btn-done-almanac">Tutup Indeks</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: PENGATURAN (SETTINGS)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-settings">
+        <div class="modal-card" style="max-width: 520px;">
+            <div class="modal-header">
+                <h2 class="modal-title">⚙️ PENGATURAN PERMAINAN</h2>
+                <button class="modal-close" id="btn-close-settings">&times;</button>
+            </div>
+
+            <div class="settings-group">
+                <!-- Master Volume -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-title">Volume Utama</span>
+                        <span class="setting-desc">Volume keseluruhan audio permainan</span>
+                    </div>
+                    <div class="setting-control">
+                        <input type="range" min="0" max="100" value="80" class="setting-slider" id="slider-vol-master">
+                        <span class="setting-val-display" id="val-vol-master">80%</span>
+                    </div>
+                </div>
+
+                <!-- BGM Volume -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-title">Musik BGM (Taiko / Koto)</span>
+                        <span class="setting-desc">Instrumen musik tradisional latar</span>
+                    </div>
+                    <div class="setting-control">
+                        <input type="range" min="0" max="100" value="40" class="setting-slider" id="slider-vol-bgm">
+                        <span class="setting-val-display" id="val-vol-bgm">40%</span>
+                        <button class="btn-header" id="btn-toggle-bgm" style="padding: 4px 8px; font-size: 0.75rem;">🎵 ON</button>
+                    </div>
+                </div>
+
+                <!-- SFX Volume -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-title">Efek Suara (SFX)</span>
+                        <span class="setting-desc">Suara pedang, petir, air, dan api</span>
+                    </div>
+                    <div class="setting-control">
+                        <input type="range" min="0" max="100" value="70" class="setting-slider" id="slider-vol-sfx">
+                        <span class="setting-val-display" id="val-vol-sfx">70%</span>
+                        <button class="btn-header" id="btn-toggle-sfx" style="padding: 4px 8px; font-size: 0.75rem;">🔊 ON</button>
+                    </div>
+                </div>
+
+                <!-- Game Speed Default -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-title">Kecepatan Pertempuran</span>
+                        <span class="setting-desc">Atur laju kecepatan permainan</span>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn-header" id="btn-settings-speed">⚡ 1.0x Normal</button>
+                    </div>
+                </div>
+
+                <!-- Ambient Petals Toggle -->
+                <div class="setting-item">
+                    <div class="setting-info">
+                        <span class="setting-title">Efek Kelopak Wisteria Latar</span>
+                        <span class="setting-desc">Animasi bunga melayang di latar belakang</span>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn-header" id="btn-toggle-petals">🌸 Aktif</button>
+                    </div>
+                </div>
+
+                <!-- Reset Data -->
+                <div class="setting-item" style="border-color: rgba(255, 23, 68, 0.4);">
+                    <div class="setting-info">
+                        <span class="setting-title" style="color: #ff5252;">Reset Progres & Prestasi</span>
+                        <span class="setting-desc">Hapus seluruh skor dan ulang dari level 1</span>
+                    </div>
+                    <div class="setting-control">
+                        <button class="btn-secondary" id="btn-settings-reset" style="color: #ff5252; border-color: #ff5252; font-size: 0.78rem; padding: 6px 12px;">
+                            🗑️ Reset Data
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="btn-save-settings">Simpan & Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: DAFTAR LEVEL (STAGE SELECT)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-levels">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">🗺️ DAFTAR LEVEL PERTEMPURAN</h2>
+                <button class="modal-close" id="btn-close-levels">&times;</button>
+            </div>
+
+            <div class="level-list">
+                <div class="level-card current" data-level="1">
+                    <div class="level-number">LEVEL 1</div>
+                    <div class="level-title">Seleksi Akhir Gunung Fujikasane</div>
+                    <div class="level-sub">Tutorial: Tanjiro & Dupa Wisteria</div>
+                </div>
+                <div class="level-card locked" data-level="2">
+                    <div class="level-number">LEVEL 2</div>
+                    <div class="level-title">Penyerangan Kuil Malam</div>
+                    <div class="level-sub">Buka: Batu Urokodaki & Zenitsu</div>
+                </div>
+                <div class="level-card locked" data-level="3">
+                    <div class="level-number">LEVEL 3</div>
+                    <div class="level-title">Rumah Drum Kyogai</div>
+                    <div class="level-sub">Buka: Inosuke & Bom Uzui</div>
+                </div>
+                <div class="level-card locked" data-level="4">
+                    <div class="level-number">LEVEL 4</div>
+                    <div class="level-title">Hutan Gunung Natagumo</div>
+                    <div class="level-sub">Buka: Nezuko & Shinobu (Boss RUI)</div>
+                </div>
+                <div class="level-card locked" data-level="5">
+                    <div class="level-number">LEVEL 5</div>
+                    <div class="level-title">Kereta Mugen Train</div>
+                    <div class="level-sub">Buka: Kyojuro Rengoku (Boss AKAZA)</div>
+                </div>
+                <div class="level-card locked" data-level="6">
+                    <div class="level-number">LEVEL 6</div>
+                    <div class="level-title">Infinity Castle</div>
+                    <div class="level-sub">Buka: Giyu (Final Boss MUZAN)</div>
+                </div>
+                <div class="level-card locked" data-level="endless" style="border-color: #e040fb;">
+                    <div class="level-number" style="color: #e040fb;">ENDLESS</div>
+                    <div class="level-title">Mode Bertahan Hidup</div>
+                    <div class="level-sub">Ujian Tanpa Batas Korps Pembasmi!</div>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="btn-cancel-levels">Kembali</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: PENCAPAIAN & SKOR
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-achievements">
+        <div class="modal-card">
+            <div class="modal-header">
+                <div>
+                    <h2 class="modal-title">🏆 SKOR PENCAPAIAN (ACHIEVEMENTS)</h2>
+                    <div style="font-size: 0.82rem; color: #ce93d8; margin-top: 3px;" id="achievements-total-points">
+                        0 / 3,000 Poin
+                    </div>
+                </div>
+                <button class="modal-close" id="btn-close-achievements">&times;</button>
+            </div>
+
+            <div class="achievements-grid" id="achievements-list">
+                <!-- Dynamically populated by achievements.js -->
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-secondary" id="btn-reset-achievements">Reset Prestasi</button>
+                <button class="btn-primary" id="btn-done-achievements">Tutup</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: KEMENANGAN (VICTORY)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-victory">
+        <div class="modal-card" style="text-align: center;">
+            <div style="font-size: 3rem; margin-bottom: 6px;">🎉 🌸 ⚔️</div>
+            <h2 class="modal-title" style="font-size: 1.8rem; margin-bottom: 8px;">PERTAHANAN BERHASIL!</h2>
+            <p style="color: #e1bee7; font-size: 0.9rem; margin-bottom: 16px;">
+                Semua Iblis berhasil dihalau! Hutan Bunga Wisteria tetap terlindungi!
+            </p>
+
+            <div class="unlock-spotlight" id="victory-unlock-box" style="display: none;">
+                <div class="unlock-thumb-wrap">
+                    <span style="font-size: 2rem;">🔓</span>
+                </div>
+                <div class="unlock-details" style="text-align: left;">
+                    <span class="unlock-tag">PEMBASMI BARU BERGABUNG!</span>
+                    <span class="unlock-name" id="victory-unlock-name">Batu Urokodaki & Zenitsu</span>
+                    <span class="unlock-desc">Unit baru siap digunakan di petualangan level berikutnya!</span>
+                </div>
+            </div>
+
+            <div class="summary-box">
+                <div class="summary-item">
+                    <span class="summary-label">Skor Akhir Ronde:</span>
+                    <span class="summary-val" id="victory-score">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Iblis Dibasmi:</span>
+                    <span class="summary-val" id="victory-demons">0</span>
+                </div>
+                <div class="summary-item" style="grid-column: span 2;">
+                    <span class="summary-label">Bonus Gerbang Torii Utuh:</span>
+                    <span class="summary-val" id="victory-torii">5 / 5 (+2,500 Poin)</span>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="justify-content: center;">
+                <button class="btn-secondary" id="btn-replay-level">Mainkan Lagi</button>
+                <button class="btn-primary" id="btn-next-level">Level Selanjutnya ➡️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: KEKALAHAN (GAMEOVER)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-gameover">
+        <div class="modal-card" style="text-align: center; border-color: #ff1744;">
+            <div style="font-size: 3rem; margin-bottom: 6px;">🩸 💀 ⛩️</div>
+            <h2 class="modal-title" style="font-size: 1.8rem; color: #ff5252; background: none; -webkit-text-fill-color: initial;">PERTAHANAN DITEMBUS!</h2>
+            <p style="color: #ef9a9a; font-size: 0.9rem; margin-bottom: 18px;">
+                Iblis berhasil menerobos seluruh Gerbang Torii suci. Jangan menyerah, asah kembali pedang Nichirin-mu!
+            </p>
+
+            <div class="summary-box">
+                <div class="summary-item">
+                    <span class="summary-label">Skor Akhir:</span>
+                    <span class="summary-val" id="gameover-score">0</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Gelombang Bertahan:</span>
+                    <span class="summary-val" id="gameover-wave">0 / 4</span>
+                </div>
+            </div>
+
+            <div class="modal-actions" style="justify-content: center;">
+                <button class="btn-primary" id="btn-retry-gameover">Coba Lagi 🔁</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+         MODAL: PANDUAN BERMAIN (HELP / GUIDE)
+         ========================================================================== -->
+    <div class="modal-backdrop" id="modal-help">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h2 class="modal-title">📖 PANDUAN KORPS PEMBASMI IBLIS</h2>
+                <button class="modal-close" id="btn-close-help">&times;</button>
+            </div>
+
+            <div style="font-size: 0.88rem; line-height: 1.6; color: #f3e5f5; display: flex; flex-direction: column; gap: 14px;">
+                <div>
+                    <h3 style="color: #ffd54f; margin-bottom: 4px;">🌸 1. Cara Bermain & Perkembangan Level (PvZ Style)</h3>
+                    <p>Permainan dimulai dengan <b>Level 1 yang ramah dan mudah</b>. Selesaikan setiap level untuk membuka karakter baru yang lebih kuat dan melanjutkan ke stage berikutnya yang semakin menantang!</p>
+                </div>
+
+                <div>
+                    <h3 style="color: #ffd54f; margin-bottom: 4px;">🌸 2. Kelopak Wisteria (Mata Uang Sumber Daya)</h3>
+                    <p>Setiap penempatan pembasmi memerlukan <b>Kelopak Wisteria (🌸)</b>. Tanam <b>Dupa Wisteria</b> di baris paling kiri/belakang agar menghasilkan kelopak secara teratur. Kelopak juga jatuh dari langit secara berkala. <b>Klik kelopak</b> untuk mengumpulkannya!</p>
+                </div>
+
+                <div>
+                    <h3 style="color: #ffd54f; margin-bottom: 4px;">⚔️ 3. Tahap Pembukaan Karakter (Unlocks)</h3>
+                    <ul style="padding-left: 20px;">
+                        <li><b>Level 1</b>: Dupa Wisteria (50🌸) & Tanjiro Kamado (100🌸).</li>
+                        <li><b>Buka di Level 2</b>: Batu Urokodaki (HP 3.500) & Zenitsu Agatsuma (Kilat & Stun).</li>
+                        <li><b>Buka di Level 3</b>: Inosuke Hashibira (Melee Cepat & Dorongan) & Bom Suara Uzui (Pembersih 3x3).</li>
+                        <li><b>Buka di Level 4</b>: Nezuko Kamado (Api Darah Slow) & Shinobu Kocho (Racun Menembus Zirah).</li>
+                        <li><b>Buka di Level 5</b>: Kyojuro Rengoku (Gelombang Api Menembus 1 Jalur).</li>
+                        <li><b>Buka di Level 6</b>: Giyu Tomioka (Ketenangan Air Nagi Memperlambat 3 Jalur).</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h3 style="color: #ffd54f; margin-bottom: 4px;">⛩️ 4. Gerbang Torii Suci (Pertahanan Darurat)</h3>
+                    <p>Di ujung kiri setiap jalur terdapat Gerbang Torii Suci. Jika iblis berhasil menyentuh garis kiri, Pedang Nichirin akan meluncur menyapu seluruh baris iblis secara instan!</p>
+                </div>
+
+                <div>
+                    <h3 style="color: #ffd54f; margin-bottom: 4px;">☀️ 5. Ultimate: Hinokami Kagura</h3>
+                    <p>Kalahkan musuh untuk mengisi meteran matahari. Saat mencapai 100%, tekan tombol <b>Hinokami</b> untuk membakar bersih seluruh iblis di semua 5 jalur arena!</p>
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn-primary" id="btn-done-help">Siap Membasmi Iblis!</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="js/audio.js"></script>
+    <script src="js/particles.js"></script>
+    <script src="js/achievements.js"></script>
+    <script src="js/sprites.js"></script>
+    <script src="js/characters.js"></script>
+    <script src="js/game.js"></script>
+
+    <!-- UI Modal, Menu & Almanac Controller -->
+    <script>
+        // Ambient Petals Canvas
+        const bgCanvas = document.getElementById('bg-petals-canvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let bgPetals = [];
+        let petalsEnabled = true;
+
+        function resizeBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeBg);
+        resizeBg();
+
+        for (let i = 0; i < 40; i++) {
+            bgPetals.push({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: 0.5 + Math.random() * 1.5,
+                vy: 0.8 + Math.random() * 1.5,
+                size: 4 + Math.random() * 5,
+                rot: Math.random() * Math.PI * 2,
+                vrot: (Math.random() - 0.5) * 0.04,
+                color: ['#ba68c8', '#ce93d8', '#f48fb1', '#e1bee7'][Math.floor(Math.random() * 4)]
+            });
+        }
+
+        function animateBgPetals() {
+            if (petalsEnabled) {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+                for (const p of bgPetals) {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.rot += p.vrot;
+
+                    if (p.y > bgCanvas.height + 20) p.y = -20;
+                    if (p.x > bgCanvas.width + 20) p.x = -20;
+
+                    bgCtx.save();
+                    bgCtx.translate(p.x, p.y);
+                    bgCtx.rotate(p.rot);
+                    bgCtx.fillStyle = p.color;
+                    bgCtx.beginPath();
+                    bgCtx.ellipse(0, 0, p.size * 1.4, p.size * 0.7, 0.4, 0, Math.PI * 2);
+                    bgCtx.fill();
+                    bgCtx.restore();
+                }
+            } else {
+                bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            }
+            requestAnimationFrame(animateBgPetals);
+        }
+        animateBgPetals();
+
+        // Audio Activation
+        window.addEventListener('click', () => {
+            sound.init();
+            sound.resume();
+        }, { once: true });
+
+        // =========================================================================
+        // MAIN MENU NAVIGATION
+        // =========================================================================
+        const mainMenu = document.getElementById('main-menu-screen');
+
+        function showMainMenu() {
+            mainMenu.classList.remove('hidden');
+            sound.startBGM();
+        }
+
+        function hideMainMenu() {
+            mainMenu.classList.add('hidden');
+        }
+
+        document.getElementById('btn-menu-play').addEventListener('click', () => {
+            sound.init();
+            sound.playUiClick();
+            hideMainMenu();
+            if (game.state !== 'PLAYING') {
+                game.loadLevel(game.currentLevel, game.isEndless);
+            }
+        });
+
+        document.getElementById('btn-menu-almanac').addEventListener('click', () => {
+            sound.init();
+            sound.playUiClick();
+            openAlmanacModal();
+        });
+
+        document.getElementById('btn-menu-levels').addEventListener('click', () => {
+            sound.init();
+            sound.playUiClick();
+            game.updateLevelSelectUI();
+            document.getElementById('modal-levels').classList.add('show');
+        });
+
+        document.getElementById('btn-menu-settings').addEventListener('click', () => {
+            sound.init();
+            sound.playUiClick();
+            openSettingsModal();
+        });
+
+        document.getElementById('btn-menu-achievements').addEventListener('click', () => {
+            sound.init();
+            sound.playUiClick();
+            achievements.renderModalContent();
+            document.getElementById('modal-achievements').classList.add('show');
+        });
+
+        document.getElementById('btn-menu-help').addEventListener('click', () => {
+            sound.init();
+            sound.playUiClick();
+            document.getElementById('modal-help').classList.add('show');
+        });
+
+        // =========================================================================
+        // IN-GAME PAUSE MENU
+        // =========================================================================
+        const modalPause = document.getElementById('modal-pause');
+        const btnPauseMenu = document.getElementById('btn-pause-menu');
+
+        function togglePause() {
+            if (mainMenu && !mainMenu.classList.contains('hidden')) return;
+            if (game.state === 'PLAYING') {
+                game.state = 'PAUSED';
+                modalPause.classList.add('show');
+                sound.playUiClick();
+            } else if (game.state === 'PAUSED') {
+                game.state = 'PLAYING';
+                modalPause.classList.remove('show');
+                sound.playUiClick();
+            }
+        }
+
+        btnPauseMenu.addEventListener('click', togglePause);
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') togglePause();
+        });
+
+        document.getElementById('btn-pause-resume').addEventListener('click', () => {
+            game.state = 'PLAYING';
+            modalPause.classList.remove('show');
+            sound.playUiClick();
+        });
+
+        document.getElementById('btn-pause-almanac').addEventListener('click', () => {
+            openAlmanacModal();
+        });
+
+        document.getElementById('btn-pause-settings').addEventListener('click', () => {
+            openSettingsModal();
+        });
+
+        document.getElementById('btn-pause-restart').addEventListener('click', () => {
+            modalPause.classList.remove('show');
+            game.loadLevel(game.currentLevel, game.isEndless);
+        });
+
+        document.getElementById('btn-pause-quit').addEventListener('click', () => {
+            modalPause.classList.remove('show');
+            game.state = 'TITLE';
+            showMainMenu();
+        });
+
+        // HUD Quick Buttons
+        document.getElementById('btn-almanac-hud').addEventListener('click', () => {
+            sound.playUiClick();
+            openAlmanacModal();
+        });
+        document.getElementById('btn-settings-hud').addEventListener('click', () => {
+            sound.playUiClick();
+            openSettingsModal();
+        });
+
+        // =========================================================================
+        // CHARACTER INDEX (ALMANAC) CONTROLLER
+        // =========================================================================
+        const modalAlmanac = document.getElementById('modal-almanac');
+        const tabSlayers = document.getElementById('tab-almanac-slayers');
+        const tabDemons = document.getElementById('tab-almanac-demons');
+        const almanacItemsList = document.getElementById('almanac-items-list');
+        const almanacCanvas = document.getElementById('almanac-preview-canvas');
+
+        let currentAlmanacTab = 'slayers';
+        let currentAlmanacIndex = 0;
+        let almanacAnimTimer = 0;
+        let almanacAnimFrame = null;
+
+        function openAlmanacModal() {
+            modalAlmanac.classList.add('show');
+            renderAlmanacList();
+            selectAlmanacItem(0);
+            startAlmanacPreviewLoop();
+        }
+
+        function closeAlmanacModal() {
+            modalAlmanac.classList.remove('show');
+            if (almanacAnimFrame) {
+                cancelAnimationFrame(almanacAnimFrame);
+                almanacAnimFrame = null;
+            }
+        }
+
+        document.getElementById('btn-close-almanac').addEventListener('click', closeAlmanacModal);
+        document.getElementById('btn-done-almanac').addEventListener('click', closeAlmanacModal);
+
+        tabSlayers.addEventListener('click', () => {
+            currentAlmanacTab = 'slayers';
+            tabSlayers.classList.add('active');
+            tabDemons.classList.remove('active');
+            renderAlmanacList();
+            selectAlmanacItem(0);
+            sound.playUiClick();
+        });
+
+        tabDemons.addEventListener('click', () => {
+            currentAlmanacTab = 'demons';
+            tabDemons.classList.add('active');
+            tabSlayers.classList.remove('active');
+            renderAlmanacList();
+            selectAlmanacItem(0);
+            sound.playUiClick();
+        });
+
+        function renderAlmanacList() {
+            almanacItemsList.innerHTML = '';
+            const dataList = ALMANAC_DATA[currentAlmanacTab];
+
+            dataList.forEach((item, idx) => {
+                const card = document.createElement('div');
+                card.className = `almanac-item-card ${idx === currentAlmanacIndex ? 'active' : ''}`;
+
+                const thumb = currentAlmanacTab === 'slayers'
+                    ? sprites.createCardThumbnail(item.id)
+                    : sprites.createDemonThumbnail(item.id);
+
+                const thumbBox = document.createElement('div');
+                thumbBox.className = 'almanac-item-thumb';
+                thumbBox.appendChild(thumb);
+
+                const infoBox = document.createElement('div');
+                infoBox.innerHTML = `
+                    <div class="almanac-item-name">${item.name}</div>
+                    <div class="almanac-item-sub">${item.sub}</div>
+                `;
+
+                card.appendChild(thumbBox);
+                card.appendChild(infoBox);
+
+                card.addEventListener('click', () => {
+                    selectAlmanacItem(idx);
+                    sound.playUiClick();
+                });
+
+                almanacItemsList.appendChild(card);
+            });
+        }
+
+        function selectAlmanacItem(idx) {
+            currentAlmanacIndex = idx;
+            document.querySelectorAll('.almanac-item-card').forEach((c, i) => {
+                c.classList.toggle('active', i === idx);
+            });
+
+            const item = ALMANAC_DATA[currentAlmanacTab][idx];
+            if (!item) return;
+
+            document.getElementById('almanac-name').textContent = item.name;
+            document.getElementById('almanac-sub').textContent = item.sub;
+            document.getElementById('almanac-desc').textContent = item.desc;
+            document.getElementById('almanac-lore').textContent = `${item.lore} ${item.quote || ''}`;
+
+            const statsGrid = document.getElementById('almanac-stats-grid');
+            if (currentAlmanacTab === 'slayers') {
+                statsGrid.innerHTML = `
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Biaya Kelopak:</span><span class="almanac-stat-val" style="color:#ff80ab;">${item.cost}</span></div>
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Daya Tahan HP:</span><span class="almanac-stat-val" style="color:#00e676;">${item.hp}</span></div>
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Jeda Cooldown:</span><span class="almanac-stat-val" style="color:#ffd54f;">${item.cooldown}</span></div>
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Daya Hancur:</span><span class="almanac-stat-val" style="color:#00bcd4;">${item.damage}</span></div>
+                `;
+            } else {
+                statsGrid.innerHTML = `
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Total Darah HP:</span><span class="almanac-stat-val" style="color:#ff5252;">${item.hp}</span></div>
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Kecepatan Lari:</span><span class="almanac-stat-val" style="color:#ffd54f;">${item.speed}</span></div>
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Tingkat Bahaya:</span><span class="almanac-stat-val">${item.danger}</span></div>
+                    <div class="almanac-stat-row"><span class="almanac-stat-label">Kelemahan:</span><span class="almanac-stat-val" style="color:#00e5ff;">${item.weakness}</span></div>
+                `;
+            }
+        }
+
+        function startAlmanacPreviewLoop() {
+            if (almanacAnimFrame) cancelAnimationFrame(almanacAnimFrame);
+
+            function loop() {
+                if (modalAlmanac.classList.contains('show')) {
+                    almanacAnimTimer += 0.035;
+                    const item = ALMANAC_DATA[currentAlmanacTab][currentAlmanacIndex];
+                    if (item) {
+                        sprites.drawAlmanacPreview(almanacCanvas, item.id, currentAlmanacTab === 'demons', almanacAnimTimer);
+                    }
+                    almanacAnimFrame = requestAnimationFrame(loop);
+                }
+            }
+            loop();
+        }
+
+        // =========================================================================
+        // SETTINGS MODAL CONTROLLER
+        // =========================================================================
+        const modalSettings = document.getElementById('modal-settings');
+        const sliderVolMaster = document.getElementById('slider-vol-master');
+        const sliderVolBgm = document.getElementById('slider-vol-bgm');
+        const sliderVolSfx = document.getElementById('slider-vol-sfx');
+        const valVolMaster = document.getElementById('val-vol-master');
+        const valVolBgm = document.getElementById('val-vol-bgm');
+        const valVolSfx = document.getElementById('val-vol-sfx');
+        const btnToggleBgm = document.getElementById('btn-toggle-bgm');
+        const btnToggleSfx = document.getElementById('btn-toggle-sfx');
+        const btnSettingsSpeed = document.getElementById('btn-settings-speed');
+        const btnTogglePetals = document.getElementById('btn-toggle-petals');
+
+        function openSettingsModal() {
+            sliderVolMaster.value = Math.round(sound.masterVolume * 100);
+            valVolMaster.textContent = `${sliderVolMaster.value}%`;
+
+            sliderVolBgm.value = Math.round(sound.bgmVolume * 100);
+            valVolBgm.textContent = `${sliderVolBgm.value}%`;
+
+            sliderVolSfx.value = Math.round(sound.sfxVolume * 100);
+            valVolSfx.textContent = `${sliderVolSfx.value}%`;
+
+            btnToggleBgm.textContent = sound.bgmMuted ? '🔇 OFF' : '🎵 ON';
+            btnToggleSfx.textContent = sound.sfxMuted ? '🔇 OFF' : '🔊 ON';
+
+            btnSettingsSpeed.textContent = `⚡ ${game.gameSpeed}x Speed`;
+            btnTogglePetals.textContent = petalsEnabled ? '🌸 Aktif' : '⚪ Mati';
+
+            modalSettings.classList.add('show');
+        }
+
+        function closeSettingsModal() {
+            modalSettings.classList.remove('show');
+        }
+
+        document.getElementById('btn-close-settings').addEventListener('click', closeSettingsModal);
+        document.getElementById('btn-save-settings').addEventListener('click', closeSettingsModal);
+
+        sliderVolMaster.addEventListener('input', (e) => {
+            const v = e.target.value / 100;
+            sound.setMasterVolume(v);
+            valVolMaster.textContent = `${e.target.value}%`;
+        });
+
+        sliderVolBgm.addEventListener('input', (e) => {
+            const v = e.target.value / 100;
+            sound.setBgmVolume(v);
+            valVolBgm.textContent = `${e.target.value}%`;
+        });
+
+        sliderVolSfx.addEventListener('input', (e) => {
+            const v = e.target.value / 100;
+            sound.setSfxVolume(v);
+            valVolSfx.textContent = `${e.target.value}%`;
+        });
+
+        btnToggleBgm.addEventListener('click', () => {
+            sound.init();
+            const active = sound.toggleBGM();
+            btnToggleBgm.textContent = active ? '🎵 ON' : '🔇 OFF';
+            sound.playUiClick();
+        });
+
+        btnToggleSfx.addEventListener('click', () => {
+            sound.init();
+            const active = sound.toggleSFX();
+            btnToggleSfx.textContent = active ? '🔊 ON' : '🔇 OFF';
+            sound.playUiClick();
+        });
+
+        btnSettingsSpeed.addEventListener('click', () => {
+            game.gameSpeed = game.gameSpeed === 1.0 ? 2.0 : 1.0;
+            btnSettingsSpeed.textContent = `⚡ ${game.gameSpeed}x Speed`;
+            document.getElementById('btn-speed').textContent = `⚡ ${game.gameSpeed}x Speed`;
+            sound.playUiClick();
+        });
+
+        btnTogglePetals.addEventListener('click', () => {
+            petalsEnabled = !petalsEnabled;
+            btnTogglePetals.textContent = petalsEnabled ? '🌸 Aktif' : '⚪ Mati';
+            sound.playUiClick();
+        });
+
+        document.getElementById('btn-settings-reset').addEventListener('click', () => {
+            if (confirm('PERINGATAN: Apakah kamu yakin ingin mereset seluruh skor pencapaian, rekor, dan progres level?')) {
+                localStorage.removeItem(achievements.storageKey);
+                localStorage.removeItem('kny_max_unlocked_level');
+                localStorage.removeItem('kny_audio_settings');
+                location.reload();
+            }
+        });
+
+        // =========================================================================
+        // LEVEL SELECTION MODAL
+        // =========================================================================
+        const modalLevels = document.getElementById('modal-levels');
+        document.getElementById('btn-levels').addEventListener('click', () => {
+            game.updateLevelSelectUI();
+            modalLevels.classList.add('show');
+            sound.playUiClick();
+        });
+        document.getElementById('btn-close-levels').addEventListener('click', () => modalLevels.classList.remove('show'));
+        document.getElementById('btn-cancel-levels').addEventListener('click', () => modalLevels.classList.remove('show'));
+
+        document.querySelectorAll('.level-card').forEach(card => {
+            card.addEventListener('click', () => {
+                if (card.classList.contains('locked')) {
+                    sound.playUiClick();
+                    return;
+                }
+                const lvl = card.dataset.level;
+                document.querySelectorAll('.level-card').forEach(c => c.classList.remove('current'));
+                card.classList.add('current');
+                modalLevels.classList.remove('show');
+                hideMainMenu();
+
+                if (lvl === 'endless') {
+                    game.loadLevel(1, true);
+                } else {
+                    game.loadLevel(parseInt(lvl, 10), false);
+                }
+                sound.playPlaceUnit();
+            });
+        });
+
+        // =========================================================================
+        // ACHIEVEMENTS & HELP MODALS
+        // =========================================================================
+        const modalAch = document.getElementById('modal-achievements');
+        document.getElementById('btn-close-achievements').addEventListener('click', () => modalAch.classList.remove('show'));
+        document.getElementById('btn-done-achievements').addEventListener('click', () => modalAch.classList.remove('show'));
+        document.getElementById('btn-reset-achievements').addEventListener('click', () => {
+            if (confirm('Apakah kamu yakin ingin mereset seluruh skor pencapaian?')) {
+                localStorage.removeItem(achievements.storageKey);
+                location.reload();
+            }
+        });
+
+        const modalHelp = document.getElementById('modal-help');
+        document.getElementById('btn-close-help').addEventListener('click', () => modalHelp.classList.remove('show'));
+        document.getElementById('btn-done-help').addEventListener('click', () => modalHelp.classList.remove('show'));
+
+        // Victory Modal Buttons
+        document.getElementById('btn-replay-level')?.addEventListener('click', () => {
+            document.getElementById('modal-victory').classList.remove('show');
+            game.loadLevel(game.currentLevel, game.isEndless);
+        });
+        document.getElementById('btn-next-level')?.addEventListener('click', () => {
+            document.getElementById('modal-victory').classList.remove('show');
+            const next = Math.min(6, game.currentLevel + 1);
+            game.loadLevel(next, false);
+        });
+
+        // Game Over Button
+        document.getElementById('btn-retry-gameover')?.addEventListener('click', () => {
+            document.getElementById('modal-gameover').classList.remove('show');
+            game.loadLevel(game.currentLevel, game.isEndless);
+        });
+    </script>
+</body>
+</html>
